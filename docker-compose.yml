@@ -115,30 +115,30 @@ services:
 #    networks:
 #      - aspire-network
 #
-#  aspire-api:
-#    container_name: aspire-api
-#    depends_on:
-#      - temporal
-#      - aspire-db
-#    environment:
-#      DB_HOST: aspire-db
-#      DB_PORT: 5432
-#      DB_USER: aspire
-#      DB_PASSWORD: 1qazxsw2
-#      DB_NAME: aspire
-#      SERVER_NAME: aspire-test
-#      SERVER_GRPC_PORT: 8001
-#      SERVER_HTTP_PORT: 9001
-#      TEMPO_HOST: temporal:7233
-#      TEMPO_NAMESPACE: aspire-test
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile-api
-#    ports:
-#      - '8001:8001'
-#      - '9001:9001'
-#    networks:
-#      - aspire-network
+  aspire-api:
+    container_name: aspire-api
+    depends_on:
+      - temporal
+      - aspire-db
+    environment:
+      DB_HOST: aspire-db
+      DB_PORT: 5432
+      DB_USER: aspire
+      DB_PASSWORD: 1qazxsw23edc
+      DB_NAME: aspire
+      SERVER_NAME: aspire-code-challenge
+      SERVER_GRPC_PORT: 8001
+      SERVER_HTTP_PORT: 9001
+      TEMPO_HOST: temporal:7233
+      TEMPO_NAMESPACE: aspire-code-challenge
+    build:
+      context: .
+      dockerfile: ./Dockerfile-api
+    ports:
+      - '8001:8001'
+      - '9001:9001'
+    networks:
+      - aspire-network
 
 networks:
   aspire-network:

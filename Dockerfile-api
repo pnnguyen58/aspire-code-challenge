@@ -1,0 +1,14 @@
+FROM golang:1.20-alpine as builder
+
+WORKDIR /app
+COPY . .
+RUN go mod download
+RUN go build -o /out/app ./cmd/api
+
+FROM alpine:latest
+WORKDIR /api
+COPY --from=builder /out/app /api/app
+COPY ./configs/. /api/.
+COPY ./configs/. /api/configs/.
+EXPOSE 8001 9001
+ENTRYPOINT ["/api/app"]

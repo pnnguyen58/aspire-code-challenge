@@ -15,9 +15,13 @@ type Repayment interface {
 	Create(context.Context, *models.Repayment) error
 	CreateBatch(context.Context, []*models.Repayment, int) error
 	UpdateState(context.Context, uint64, defined.State) error
+	UpdateStateByLoanID(context.Context, uint64, defined.State) error
 
 	CreatePrepay(context.Context, *models.RepaymentPrepay) error
 	DeletePrepay(context.Context, uint64) error
+
+	GetByLoanID(context.Context, uint64) ([]*models.Repayment, error)
+	GetUnpaidByLoanID(context.Context, uint64) ([]*models.Repayment, error)
 }
 
 func NewRepayment(db *gorm.DB) Repayment {
@@ -74,8 +78,38 @@ func (r *repayment) CreateBatch(ctx context.Context, repayments []*models.Repaym
 	return err
 }
 
-func (r *repayment) UpdateState(ctx context.Context, loadID uint64, state defined.State) error {
+func (r *repayment) UpdateState(ctx context.Context, id uint64, state defined.State) error {
 	err := r.db.WithContext(ctx).
-		Save(&models.Repayment{ID: loadID, State: string(state)}).Error
+		Model(models.Repayment{}).
+		Where("id = ?", id).
+		Update("state", state).Error
 	return err
+}
+
+func (r *repayment) UpdateStateByLoanID(ctx context.Context, loanID uint64, state defined.State) error {
+	err := r.db.WithContext(ctx).
+		Model(models.Repayment{}).
+		Where("loan_id = ?", loanID).
+		Update("state", state).Error
+	return err
+}
+
+func (r *repayment) GetByLoanID(ctx context.Context, loanID uint64) ([]*models.Repayment, error) {
+	var result []*models.Repayment
+	err := r.db.WithContext(ctx).
+		Model(models.Repayment{}).
+		Where("loan_id = ?", loanID).
+		Find(&result).Error
+	return result, err
+}
+
+func (r *repayment) GetUnpaidByLoanID(ctx context.Context, loanID uint64) ([]*models.Repayment, error) {
+	var result []*models.Repayment
+	err := r.db.WithContext(ctx).
+		Model(models.Repayment{}).
+		Where("loan_id = ?", loanID).
+		Where("state != ?", defined.PAID).
+		Order("due_date ASC").
+		Find(&result).Error
+	return result, err
 }

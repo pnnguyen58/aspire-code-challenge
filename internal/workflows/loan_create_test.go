@@ -1,13 +1,14 @@
 package workflows
 
 import (
-	"canaanadvisors-test/core/activities"
-	"canaanadvisors-test/proto/order"
 	"github.com/stretchr/testify/suite"
 	"go.temporal.io/sdk/testsuite"
 	"go.temporal.io/sdk/workflow"
 	"testing"
 	"time"
+
+	"github.com/pnnguyen58/aspire-code-challenge/internal/activities"
+	protogen "github.com/pnnguyen58/aspire-code-challenge/pkg/proto_generated"
 )
 
 type UnitTestSuite struct {
@@ -29,10 +30,10 @@ func TestUnitTestSuite(t *testing.T) {
 	suite.Run(t, new(UnitTestSuite))
 }
 
-func (s *UnitTestSuite) Test_CreateExampleWorkflow_Success() {
-	s.env.RegisterActivity(activities.CreateOrder)
+func (s *UnitTestSuite) Test_CreateLoanWorkflow_Success() {
+	s.env.RegisterActivity(activities.CreateLoan)
 
-	s.env.ExecuteWorkflow(CreateOrderWorkflow, &order.OrderCreateRequest{})
+	s.env.ExecuteWorkflow(CreateLoan, &protogen.LoanCreateRequest{})
 
 	s.True(s.env.IsWorkflowCompleted())
 	s.NoError(s.env.GetWorkflowError())
@@ -49,7 +50,7 @@ func ProgressWorkflow(ctx workflow.Context, percent int) error {
 		return err
 	}
 
-	for percent = 0; percent<100; percent++ {
+	for percent = 0; percent < 100; percent++ {
 		// Important! Use `workflow.Sleep()`, not `time.Sleep()`, because Temporal's
 		// test environment doesn't stub out `time.Sleep()`.
 		_ = workflow.Sleep(ctx, time.Second*1)
@@ -86,13 +87,13 @@ func (s *UnitTestSuite) Test_ProgressWorkflow() {
 
 func (s *UnitTestSuite) Test_Workflow() {
 	s.env = s.NewTestWorkflowEnvironment()
-	s.env.RegisterActivity(activities.CreateOrder)
+	s.env.RegisterActivity(activities.CreateLoan)
 
-	s.env.ExecuteWorkflow(CreateOrderWorkflow, &order.OrderCreateRequest{})
+	s.env.ExecuteWorkflow(CreateLoan, &protogen.LoanCreateRequest{})
 
 	s.True(s.env.IsWorkflowCompleted())
 	s.NoError(s.env.GetWorkflowError())
 
-	var result order.OrderCreateResponse
+	var result protogen.LoanCreateResponse
 	_ = s.env.GetWorkflowResult(&result)
 }

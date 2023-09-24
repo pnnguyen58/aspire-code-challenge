@@ -1,16 +1,17 @@
 package workflows
 
 import (
-	"github.com/pnnguyen58/aspire-code-challenge/internal/activities"
-	protogen "github.com/pnnguyen58/aspire-code-challenge/pkg/proto_generated"
 	"go.temporal.io/sdk/workflow"
 	"go.uber.org/multierr"
 	"time"
+
+	"github.com/pnnguyen58/aspire-code-challenge/internal/activities"
+	protogen "github.com/pnnguyen58/aspire-code-challenge/pkg/proto_generated"
 )
 
-// CreateLoanWorkflow workflows definition
-func CreateLoanWorkflow(ctx workflow.Context, flowInput *protogen.LoanCreateRequest) (
-	*protogen.LoanCreateResponse, error) {
+// GetLoan workflows definition
+func GetLoan(ctx workflow.Context, flowInput *protogen.LoanGetRequest) (
+	*protogen.LoanGetResponse, error) {
 	// Workflow has to check input valid or not
 	//inputErr := flowInput.CheckValid()
 	//if inputErr != nil {
@@ -26,14 +27,14 @@ func CreateLoanWorkflow(ctx workflow.Context, flowInput *protogen.LoanCreateRequ
 	// This is how you log
 	// workflows.GetLogger(ctx).Info("jobInput.Inputs", flowInput.Inputs)
 
-	result := &protogen.LoanCreateResponse{}
-	err := workflow.ExecuteActivity(ctx, activities.CreateLoan, flowInput).Get(ctx, result)
+	result := &protogen.LoanGetResponse{}
+	err := workflow.ExecuteActivity(ctx, activities.GetLoan, flowInput).Get(ctx, result)
 	if err != nil {
 		return nil, err
 	}
 	defer func() {
 		if err != nil {
-			errCompensation := workflow.ExecuteActivity(ctx, activities.CreateLoanCompensation, flowInput).
+			errCompensation := workflow.ExecuteActivity(ctx, activities.GetLoanCompensation, flowInput).
 				Get(ctx, nil)
 			err = multierr.Append(err, errCompensation)
 		}

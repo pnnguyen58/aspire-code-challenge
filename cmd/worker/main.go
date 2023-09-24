@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/worker"
+	"go.uber.org/fx"
+	"log"
+	"os"
+
 	"github.com/pnnguyen58/aspire-code-challenge/api/server/handlers"
 	"github.com/pnnguyen58/aspire-code-challenge/configs"
 	"github.com/pnnguyen58/aspire-code-challenge/internal/activities"
@@ -10,11 +16,6 @@ import (
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/clients"
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/logger"
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/persistence"
-	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/worker"
-	"go.uber.org/fx"
-	"log"
-	"os"
 )
 
 //

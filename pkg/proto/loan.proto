@@ -33,10 +33,50 @@ message LoanCreateResponse {
   int32 code = 3;
 }
 
+message LoanApproveRequest {
+  uint64 id = 1;
+}
+
+message LoanApproveResponse {
+  uint64 data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+
+message LoanGetRequest {
+  uint64 id = 1;
+}
+
+message LoanGetResponse {
+  Loan data = 1;
+  string error = 2;
+  int32 code = 3;
+}
+
 service LoanService {
   rpc CreateLoan(LoanCreateRequest) returns (LoanCreateResponse) {
     option (google.api.http) = {
       post: "/loans"
+      body: "*"
+    };
+  }
+
+  rpc ApproveLoan(LoanApproveRequest) returns (LoanApproveResponse) {
+    option (google.api.http) = {
+      put: "/loans/{id}/approve"
+      body: "*"
+    };
+  }
+
+  rpc GetLoan(LoanGetRequest) returns (LoanGetResponse) {
+    option (google.api.http) = {
+      get: "/loans/{id}"
+    };
+  }
+
+  rpc AddRepayment(RepaymentCreateRequest) returns (RepaymentCreateResponse) {
+    option (google.api.http) = {
+      post: "/loans/{loan_id}/repayments"
       body: "*"
     };
   }

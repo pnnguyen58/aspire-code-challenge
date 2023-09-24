@@ -25,10 +25,10 @@ func NewLoan(db *gorm.DB) Loan {
 	}
 }
 
-func (l *loan) GetByID(ctx context.Context, loadID uint64) (*models.Loan, error) {
+func (l *loan) GetByID(ctx context.Context, id uint64) (*models.Loan, error) {
 	var result models.Loan
 	err := l.db.WithContext(ctx).
-		Model(models.Loan{ID: loadID}).First(&result).Error
+		Model(models.Loan{ID: id}).First(&result).Error
 	return &result, err
 }
 
@@ -40,10 +40,11 @@ func (l *loan) Create(ctx context.Context, loan *models.Loan) error {
 	return err
 }
 
-func (l *loan) UpdateState(ctx context.Context, loadID uint64, state defined.State) error {
+func (l *loan) UpdateState(ctx context.Context, id uint64, state defined.State) error {
 	err := l.db.Model(models.Loan{}).
 		WithContext(ctx).
-		Save(&models.Loan{ID: loadID, State: string(state)}).Error
+		Where("id = ?", id).
+		Update("state", state).Error
 	return err
 }
 

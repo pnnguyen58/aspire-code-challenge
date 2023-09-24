@@ -4,34 +4,19 @@ import (
 	"context"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/pnnguyen58/aspire-code-challenge/internal/defined"
-	"github.com/pnnguyen58/aspire-code-challenge/internal/models"
 	"github.com/pnnguyen58/aspire-code-challenge/internal/repositories"
 	protogen "github.com/pnnguyen58/aspire-code-challenge/pkg/proto_generated"
 )
 
-func CreateLoan(ctx context.Context, req *protogen.LoanCreateRequest) (*protogen.LoanCreateResponse, error) {
-	amount := float64(req.Amount)
-	loan := &models.Loan{
-		CustomerID:    req.CustomerId,
-		RepaymentType: string(defined.WEEKLY),
-		Amount:        amount,
-		Term:          req.Term,
-		State:         string(defined.PENDING),
-	}
-	if err := loan.ValidateCreate(); err != nil {
-		return nil, err
-	}
-	err := repositories.W.LoanRepo.Create(ctx, loan)
+func GetLoan(ctx context.Context, req *protogen.LoanGetRequest) (*protogen.LoanGetResponse, error) {
+	loan, err := repositories.W.LoanRepo.GetByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	repayments := makeRepayment(*loan)
-	err = repositories.W.RepaymentRepo.CreateBatch(ctx, repayments, defined.BACTH_SIZE)
+	repayments, err := repositories.W.RepaymentRepo.GetByLoanID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-
 	data := &protogen.Loan{
 		Id:            loan.ID,
 		CustomerId:    loan.CustomerID,
@@ -50,14 +35,15 @@ func CreateLoan(ctx context.Context, req *protogen.LoanCreateRequest) (*protogen
 			State:     r.State,
 			DueDate:   timestamppb.New(r.DueDate),
 			CreatedAt: timestamppb.New(r.CreatedAt),
+			UpdatedAt: timestamppb.New(r.UpdatedAt),
 		})
 	}
-	return &protogen.LoanCreateResponse{
+	return &protogen.LoanGetResponse{
 		Data: data,
 	}, nil
 }
 
-func CreateLoanCompensation(ctx context.Context, req *protogen.LoanCreateRequest) (*protogen.LoanCreateResponse, error) {
-	// TODO: implement create loan compensate
+func GetLoanCompensation(ctx context.Context, req *protogen.LoanGetRequest) (*protogen.LoanGetResponse, error) {
+	// TODO: implement approve loan compensate
 	return nil, nil
 }

@@ -4,7 +4,7 @@ const (
 	SCHEDULED State = "SCHEDULED"
 	APPROVED  State = "APPROVED"
 	PENDING   State = "PENDING"
-	CANCELED  State = "PENDING"
+	PAID      State = "PAID"
 )
 
 const (
