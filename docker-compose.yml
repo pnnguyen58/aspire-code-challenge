@@ -110,6 +110,7 @@ services:
     depends_on:
       - temporal
       - aspire-db
+      - aspire-api
     environment:
       DB_HOST: aspire-db
       DB_PORT: 5432
