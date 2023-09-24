@@ -108,7 +108,7 @@ func (r *repayment) GetUnpaidByLoanID(ctx context.Context, loanID uint64) ([]*mo
 	err := r.db.WithContext(ctx).
 		Model(models.Repayment{}).
 		Where("loan_id = ?", loanID).
-		Where("state != ?", defined.PAID).
+		Where("state = ?", defined.APPROVED).
 		Order("due_date ASC").
 		Find(&result).Error
 	return result, err

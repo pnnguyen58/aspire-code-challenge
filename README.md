@@ -22,11 +22,12 @@ It can be a simplified repay functionality, which won’t need to check if the d
 - Docker, docker compose
 - Database: postgres
 
-
-
 ## Directory structure
-    📁 aspire-code-challeng
+    📁 aspire-code-challenge
     |__ 📁 api // adapter layer, write endpoints
+    |__ 📁 cmd
+        |__ 📁 api
+        |__ 📁 worker
     |__ 📁 config
         |__ .env
         |__ app.go // app config
@@ -45,18 +46,29 @@ It can be a simplified repay functionality, which won’t need to check if the d
         |__ 📁 persistence // database
         |__ 📁 proto // define grpc proto and http transcoding
     |__ 📁 scripts // scripts for init database, others
-    |__ 📁 worker // temporal workers
+    |__ 📁 infra // temporal workers
+        |__ Dockerfile-api // for run api
+        |__ Dockerfile-worker // for run worker
     |__ docker-compose.yml
-    |__ Dockerfile-api // for run api
-    |__ Dockerfile-worker // for run worker
     |__ go.mod
     |__ go.sum
     |__ README.md
 
 ## How to run local
-- Run services and workers: `docker compose up -d`
+- Run services and workers: `docker compose up --build -d`. 
+If `aspire-api` and `aspire-worker` not running, maybe initialize not done yet, please 
+re-run the docker compose command again.
 - Generate proto: `make`
 - TODO: run services and worker separately for scaling
+
+## How to test
+- HTTP: Install postman.
+  - Import `aspire-code-challenge.json`
+  - Host: localhost
+  - Port: 9001
+- gRPC: Install postman or BloomRPC
+  - Host: localhost
+  - Port: 8001
 
 ## Monitoring
 - Workflow status: http://localhost:8080/namespaces/aspire-code-challenge/workflows
@@ -66,6 +78,8 @@ It can be a simplified repay functionality, which won’t need to check if the d
 - Add a policy check to make sure that the customers can view them own loan only.
 - Implement more unit tests
 - Implement exceed amount repayment
+- Fix docker network and wait dependencies healthy
+- Implement error abstract
 
 
 ## References

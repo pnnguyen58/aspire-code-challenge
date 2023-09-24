@@ -38,10 +38,10 @@ func ReadConfig() {
 	Config.Server.Name = GetEnv[string]("SERVER_NAME", "aspire-code-challenge")
 	Config.Server.GRPCPort = GetEnv[string]("SERVER_GRPC_PORT", "8001")
 	Config.Server.HTTPPort = GetEnv[string]("SERVER_HTTP_PORT", "9001")
-	Config.Server.TempoHost = GetEnv[string]("TEMPO_HOST", "localhost:7233")
+	Config.Server.TempoHost = GetEnv[string]("TEMPO_HOST", "temporal:7233")
 	Config.Server.TempoNameSpace = GetEnv[string]("TEMPO_NAMESPACE", "aspire-code-challenge")
 
-	Config.Database.Host = GetEnv[string]("DB_HOST", "localhost")
+	Config.Database.Host = GetEnv[string]("DB_HOST", "aspire-db")
 	Config.Database.Port = GetEnv[int]("DB_PORT", 5432)
 	Config.Database.User = GetEnv[string]("DB_USER", "aspire")
 	Config.Database.Password = GetEnv[string]("DB_PASSWORD", "1qazxsw23edc")

@@ -21,12 +21,18 @@ func CreateRepayment(ctx context.Context, req *protogen.RepaymentCreateRequest,
 	if len(unpaidRepayments) == 0 {
 		return nil, fmt.Errorf("no unpaid repayment")
 	}
-	// TODO check repayment amount exceed
-	if amount < unpaidRepayments[0].Amount {
+	repayment := &models.Repayment{}
+	for _, r := range unpaidRepayments {
+		if amount >= r.Amount {
+			repayment = r
+			break
+		}
+	}
+	if repayment.ID == 0 {
 		return nil, fmt.Errorf("unacceptable repayment amount")
 	}
 
-	err = repositories.W.RepaymentRepo.UpdateState(ctx, unpaidRepayments[0].ID, defined.PAID)
+	err = repositories.W.RepaymentRepo.UpdateState(ctx, repayment.ID, defined.PAID)
 	if err != nil {
 		return nil, err
 	}
@@ -36,15 +42,30 @@ func CreateRepayment(ctx context.Context, req *protogen.RepaymentCreateRequest,
 	}
 	_ = repositories.W.RepaymentRepo.CreateLog(ctx, log)
 
+	// TODO check repayment amount exceed
+	if amount > repayment.Amount {
+		prepay := &models.RepaymentPrepay{
+			LoanID: repayment.LoanID,
+			Amount: amount - repayment.Amount,
+		}
+		_ = repositories.W.RepaymentRepo.CreatePrepay(ctx, prepay)
+	}
+	// Update loan to PAID when all repayment paid
+	if len(unpaidRepayments) == 1 {
+		err = repositories.W.LoanRepo.UpdateState(ctx, repayment.LoanID, defined.PAID)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &protogen.RepaymentCreateResponse{
 		Data: &protogen.Repayment{
-			Id:        unpaidRepayments[0].ID,
-			LoanId:    unpaidRepayments[0].LoanID,
-			Amount:    float32(unpaidRepayments[0].Amount),
+			Id:        repayment.ID,
+			LoanId:    repayment.LoanID,
+			Amount:    float32(repayment.Amount),
 			State:     string(defined.PAID),
-			DueDate:   timestamppb.New(unpaidRepayments[0].DueDate),
-			CreatedAt: timestamppb.New(unpaidRepayments[0].CreatedAt),
-			UpdatedAt: timestamppb.New(unpaidRepayments[0].UpdatedAt),
+			DueDate:   timestamppb.New(repayment.DueDate),
+			CreatedAt: timestamppb.New(repayment.CreatedAt),
+			UpdatedAt: timestamppb.New(repayment.UpdatedAt),
 		},
 	}, nil
 }

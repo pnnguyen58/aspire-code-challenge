@@ -20,21 +20,21 @@ func mockTempoConfig() (tc *clients.TempoConfig) {
 	}
 	tc.Workflows["loan-workflow"] = &clients.Workflow{
 		TaskQueueName:      "loan-workflow",
-		ExecutionTimeout:   60 * time.Second,
-		RunTimeout:         60 * time.Second,
-		TaskTimeout:        60 * time.Second,
-		MaximumInterval:    60 * time.Second,
-		InitialInterval:    60 * time.Second,
-		BackoffCoefficient: 2.0,
+		ExecutionTimeout:   10 * time.Second,
+		RunTimeout:         10 * time.Second,
+		TaskTimeout:        10 * time.Second,
+		MaximumInterval:    10 * time.Second,
+		InitialInterval:    10 * time.Second,
+		BackoffCoefficient: 1.0,
 	}
 	tc.Workflows["repayment-workflow"] = &clients.Workflow{
 		TaskQueueName:      "repayment-workflow",
-		ExecutionTimeout:   60 * time.Second,
-		RunTimeout:         60 * time.Second,
-		TaskTimeout:        60 * time.Second,
-		MaximumInterval:    60 * time.Second,
-		InitialInterval:    60 * time.Second,
-		BackoffCoefficient: 2.0,
+		ExecutionTimeout:   10 * time.Second,
+		RunTimeout:         10 * time.Second,
+		TaskTimeout:        10 * time.Second,
+		MaximumInterval:    10 * time.Second,
+		InitialInterval:    10 * time.Second,
+		BackoffCoefficient: 1.0,
 	}
 	return
 }

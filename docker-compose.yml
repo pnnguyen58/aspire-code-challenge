@@ -1,4 +1,16 @@
 version: "3.5"
+
+networks:
+  aspire-network:
+    driver: bridge
+    name: aspire-network
+
+volumes:
+  aspire-db:
+    driver: local
+  cache:
+    driver: local
+
 services:
   elasticsearch:
     container_name: temporal-elasticsearch
@@ -90,31 +102,31 @@ services:
     volumes:
       - ./.volume/db:/var/lib/postgresql/data
       - ./scripts/db/initdb.d:/docker-entrypoint-initdb.d
-#
-#  aspire-worker-1:
-#    container_name: aspire-worker-1
-#    depends_on:
-#      - temporal
-#      - aspire-db
-#    environment:
-#      DB_HOST: aspire-db
-#      DB_PORT: 5432
-#      DB_USER: aspire
-#      DB_PASSWORD: 1qazxsw2
-#      DB_NAME: aspire
-#      DB_SCHEMA: public
-#      DB_CONN_MAX_LIFETIME_SECOND: 300
-#      DB_MAX_OPEN_CONN: 100
-#      DB_MAX_IDLE_CONN: 100
-#      TEMPO_HOST: temporal:7233
-#      TEMPO_NAMESPACE: aspire-test
-#      TEMPO_TASK_QUEUE: aspire-test-order,aspire-test-useraspire-test-notification,aspire-test-management
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile-worker
-#    networks:
-#      - aspire-network
-#
+    networks:
+      - aspire-network
+
+  aspire-worker-1:
+    container_name: aspire-worker-1
+    depends_on:
+      - temporal
+      - aspire-db
+    environment:
+      DB_HOST: aspire-db
+      DB_PORT: 5432
+      DB_USER: aspire
+      DB_PASSWORD: 1qazxsw23edc
+      DB_NAME: code_challenge
+      SERVER_NAME: aspire-code-challenge
+      SERVER_GRPC_PORT: 8001
+      SERVER_HTTP_PORT: 9001
+      TEMPO_HOST: temporal:7233
+      TEMPO_NAMESPACE: aspire-code-challenge
+    build:
+      context: .
+      dockerfile: ./infra/Dockerfile-worker
+    networks:
+      - aspire-network
+
   aspire-api:
     container_name: aspire-api
     depends_on:
@@ -125,7 +137,7 @@ services:
       DB_PORT: 5432
       DB_USER: aspire
       DB_PASSWORD: 1qazxsw23edc
-      DB_NAME: aspire
+      DB_NAME: code_challenge
       SERVER_NAME: aspire-code-challenge
       SERVER_GRPC_PORT: 8001
       SERVER_HTTP_PORT: 9001
@@ -133,20 +145,10 @@ services:
       TEMPO_NAMESPACE: aspire-code-challenge
     build:
       context: .
-      dockerfile: ./Dockerfile-api
+      dockerfile: ./infra/Dockerfile-api
     ports:
       - '8001:8001'
       - '9001:9001'
     networks:
       - aspire-network
 
-networks:
-  aspire-network:
-    driver: bridge
-    name: aspire-network
-
-volumes:
-  aspire-db:
-    driver: local
-  cache:
-    driver: local

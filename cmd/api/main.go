@@ -3,18 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/pnnguyen58/aspire-code-challenge/internal/app"
-	"go.uber.org/fx"
-	"os"
-	"os/signal"
-
 	"github.com/pnnguyen58/aspire-code-challenge/api/server"
 	"github.com/pnnguyen58/aspire-code-challenge/api/server/handlers"
 	"github.com/pnnguyen58/aspire-code-challenge/configs"
+	"github.com/pnnguyen58/aspire-code-challenge/internal/app"
 	"github.com/pnnguyen58/aspire-code-challenge/internal/repositories"
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/clients"
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/logger"
 	"github.com/pnnguyen58/aspire-code-challenge/pkg/persistence"
+	"go.uber.org/fx"
+	"os"
+	"os/signal"
 )
 
 func main() {
