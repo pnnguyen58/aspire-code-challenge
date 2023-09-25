@@ -73,6 +73,8 @@ re-run the docker compose command again.
 ## Monitoring
 - Workflow status: http://localhost:8080/namespaces/aspire-code-challenge/workflows
 
+## Conceptual model
+![img.png](docs/aspire-code-challenge-conceptual-model.png)
 
 ## TODO tasks
 - Add a policy check to make sure that the customers can view them own loan only.
